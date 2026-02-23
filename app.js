@@ -12,6 +12,8 @@ const updateRoutes = require("./src/routes/update.routes");
 
 const deviceUpdateRoutes = require("./src/routes/deviceUpdate.routes");
 
+const statsRoutes = require("./src/routes/stats.routes");
+
 const app = express();
 app.use(express.json());
 
@@ -22,6 +24,7 @@ app.use("/version", versionRoutes);
 app.use("/upgrade", upgradeRoutes);
 app.use("/update", updateRoutes);
 app.use("/device-update", deviceUpdateRoutes);
+app.use("/stats", statsRoutes);
 
 app.listen(process.env.PORT, () =>
   console.log(`Server running on port ${process.env.PORT}`)
