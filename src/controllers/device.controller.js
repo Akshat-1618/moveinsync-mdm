@@ -17,3 +17,12 @@ exports.heartbeat = async (req, res) => {
     res.status(404).json({ error: err.message });
   }
 };
+
+exports.checkUpdate = async (req, res) => {
+  try {
+    const result = await service.checkForUpdate(req.params.imei);
+    res.json(result);
+  } catch (err) {
+    res.status(404).json({ error: err.message });
+  }
+};
