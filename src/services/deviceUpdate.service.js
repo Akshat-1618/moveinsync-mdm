@@ -7,7 +7,7 @@ const allowedTransitions = {
   downloading: ["installing", "failed"],
   installing: ["success", "failed"],
   success: [],
-  failed: ["downloading"] // retry allowed
+  failed: ["downloading"]
 };
 
 async function logUpdateEvent(data) {
@@ -15,12 +15,10 @@ async function logUpdateEvent(data) {
     .findOne({ device_imei: data.imei, job_id: data.jobId })
     .sort({ timestamp: -1 });
 
-  // first state must be notified
   if (!lastEvent && data.state !== "notified") {
     throw new Error("First state must be 'notified'");
   }
 
-  // validate transition
   if (lastEvent) {
     const allowed = allowedTransitions[lastEvent.state] || [];
     if (!allowed.includes(data.state)) {
@@ -28,12 +26,10 @@ async function logUpdateEvent(data) {
     }
   }
 
-  // failed must include reason
   if (data.state === "failed" && !data.reason) {
     throw new Error("Failure reason required when state is failed");
   }
 
-  // store event
   const event = await DeviceUpdate.create({
     device_imei: data.imei,
     job_id: data.jobId,
@@ -41,7 +37,6 @@ async function logUpdateEvent(data) {
     reason: data.reason || null
   });
 
-  // 🔥 IMPORTANT: if success → update installed version
   if (data.state === "success") {
     const job = await UpdateJob.findById(data.jobId);
     if (job) {
